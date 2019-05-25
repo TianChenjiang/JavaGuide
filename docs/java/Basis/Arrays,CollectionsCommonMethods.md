@@ -54,12 +54,12 @@ void rotate(List list, int distance)//旋转。当distance为正数时，将list
 		Collections.reverse(arrayList);
 		System.out.println("Collections.reverse(arrayList):");
 		System.out.println(arrayList);
-		
-		 
+
+
 		Collections.rotate(arrayList, 4);
 		System.out.println("Collections.rotate(arrayList, 4):");
 		System.out.println(arrayList);
-		
+
 		// void sort(List list),按自然排序的升序排序
 		Collections.sort(arrayList);
 		System.out.println("Collections.sort(arrayList):");
@@ -68,6 +68,11 @@ void rotate(List list, int distance)//旋转。当distance为正数时，将list
 		// void shuffle(List list),随机排序
 		Collections.shuffle(arrayList);
 		System.out.println("Collections.shuffle(arrayList):");
+		System.out.println(arrayList);
+
+		// void swap(List list, int i , int j),交换两个索引位置的元素
+		Collections.swap(arrayList, 2, 5);
+		System.out.println("Collections.swap(arrayList, 2, 5):");
 		System.out.println(arrayList);
 
 		// 定制排序的用法
@@ -88,9 +93,9 @@ void rotate(List list, int distance)//旋转。当distance为正数时，将list
 int binarySearch(List list, Object key)//对List进行二分查找，返回索引，注意List必须是有序的
 int max(Collection coll)//根据元素的自然顺序，返回最大的元素。 类比int min(Collection coll)
 int max(Collection coll, Comparator c)//根据定制排序，返回最大元素，排序规则由Comparatator类控制。类比int min(Collection coll, Comparator c)
-void fill(List list, Object obj)//用指定的元素代替指定list中的所有元素。 
+void fill(List list, Object obj)//用指定的元素代替指定list中的所有元素。
 int frequency(Collection c, Object o)//统计元素出现次数
-int indexOfSubList(List list, List target)//统计targe在list中第一次出现的索引，找不到则返回-1，类比int lastIndexOfSubList(List source, list target).
+int indexOfSubList(List list, List target)//统计target在list中第一次出现的索引，找不到则返回-1，类比int lastIndexOfSubList(List source, list target).
 boolean replaceAll(List list, Object oldVal, Object newVal), 用新元素替换旧元素
 ```
 
@@ -137,7 +142,7 @@ boolean replaceAll(List list, Object oldVal, Object newVal), 用新元素替换�
 
 ### 同步控制
 
-Collectons提供了多个`synchronizedXxx()`方法·，该方法可以将指定集合包装成线程同步的集合，从而解决多线程并发访问集合时的线程安全问题。
+Collections提供了多个`synchronizedXxx()`方法·，该方法可以将指定集合包装成线程同步的集合，从而解决多线程并发访问集合时的线程安全问题。
 
 我们知道 HashSet，TreeSet，ArrayList,LinkedList,HashMap,TreeMap 都是线程不安全的。Collections提供了多个静态方法可以把他们包装成线程同步的集合。
 
@@ -147,9 +152,69 @@ Collectons提供了多个`synchronizedXxx()`方法·，该方法可以将指定�
 
 ```java
 synchronizedCollection(Collection<T>  c) //返回指定 collection 支持的同步（线程安全的）collection。
-synchronizedList(List<T> list)//返回指定列表支持的同步（线程安全的）List。 
+synchronizedList(List<T> list)//返回指定列表支持的同步（线程安全的）List。
 synchronizedMap(Map<K,V> m) //返回由指定映射支持的同步（线程安全的）Map。
-synchronizedSet(Set<T> s) //返回指定 set 支持的同步（线程安全的）set。 
+synchronizedSet(Set<T> s) //返回指定 set 支持的同步（线程安全的）set。
+```
+
+### Collections还可以设置不可变集合，提供了如下三类方法：
+
+```java
+emptyXxx(): 返回一个空的、不可变的集合对象，此处的集合既可以是List，也可以是Set，还可以是Map。
+singletonXxx(): 返回一个只包含指定对象（只有一个或一个元素）的不可变的集合对象，此处的集合可以是：List，Set，Map。
+unmodifiableXxx(): 返回指定集合对象的不可变视图，此处的集合可以是：List，Set，Map。
+上面三类方法的参数是原有的集合对象，返回值是该集合的”只读“版本。
+```
+
+**示例代码：**
+
+```java
+        ArrayList<Integer> arrayList = new ArrayList<Integer>();
+        arrayList.add(-1);
+        arrayList.add(3);
+        arrayList.add(3);
+        arrayList.add(-5);
+        arrayList.add(7);
+        arrayList.add(4);
+        arrayList.add(-9);
+        arrayList.add(-7);
+        HashSet<Integer> integers1 = new HashSet<>();
+        integers1.add(1);
+        integers1.add(3);
+        integers1.add(2);
+        Map scores = new HashMap();
+        scores.put("语文" , 80);
+        scores.put("Java" , 82);
+
+        //Collections.emptyXXX();创建一个空的、不可改变的XXX对象
+        List<Object> list = Collections.emptyList();
+        System.out.println(list);//[]
+        Set<Object> objects = Collections.emptySet();
+        System.out.println(objects);//[]
+        Map<Object, Object> objectObjectMap = Collections.emptyMap();
+        System.out.println(objectObjectMap);//{}
+
+        //Collections.singletonXXX();
+        List<ArrayList<Integer>> arrayLists = Collections.singletonList(arrayList);
+        System.out.println(arrayLists);//[[-1, 3, 3, -5, 7, 4, -9, -7]]
+        //创建一个只有一个元素，且不可改变的Set对象
+        Set<ArrayList<Integer>> singleton = Collections.singleton(arrayList);
+        System.out.println(singleton);//[[-1, 3, 3, -5, 7, 4, -9, -7]]
+        Map<String, String> nihao = Collections.singletonMap("1", "nihao");
+        System.out.println(nihao);//{1=nihao}
+
+        //unmodifiableXXX();创建普通XXX对象对应的不可变版本
+        List<Integer> integers = Collections.unmodifiableList(arrayList);
+        System.out.println(integers);//[-1, 3, 3, -5, 7, 4, -9, -7]
+        Set<Integer> integers2 = Collections.unmodifiableSet(integers1);
+        System.out.println(integers2);//[1, 2, 3]
+        Map<Object, Object> objectObjectMap2 = Collections.unmodifiableMap(scores);
+        System.out.println(objectObjectMap2);//{Java=82, 语文=80}
+
+        //添加出现异常：java.lang.UnsupportedOperationException
+//        list.add(1);
+//        arrayLists.add(arrayList);
+//        integers.add(1);
 ```
 
 ## Arrays类的常见操作
@@ -159,7 +224,8 @@ synchronizedSet(Set<T> s) //返回指定 set 支持的同步（线程安全的�
 4. 填充 : `fill()`
 5. 转列表:  `asList()`
 6. 转字符串 : `toString()`
-7. 
+7. 复制: `copyOf()`
+
 
 ### 排序 : `sort()`
 
@@ -186,7 +252,7 @@ synchronizedSet(Set<T> s) //返回指定 set 支持的同步（线程安全的�
 		System.out.println();
 
 		int c[] = { 1, 3, 2, 7, 6, 5, 4, 9 };
-		// parallelSort(int[] a) 按照数字顺序排列指定的数组。同sort方法一样也有按范围的排序
+		// parallelSort(int[] a) 按照数字顺序排列指定的数组(并行的)。同sort方法一样也有按范围的排序
 		Arrays.parallelSort(c);
 		System.out.println("Arrays.parallelSort(c)：");
 		for (int i : c) {
@@ -220,6 +286,9 @@ System.out.println(Arrays.toString(strs));//[abcdeag, abcdefg, abcdehg]
 ```java
 		// *************查找 binarySearch()****************
 		char[] e = { 'a', 'f', 'b', 'c', 'e', 'A', 'C', 'B' };
+		// 排序后再进行二分查找，否则找不到
+		Arrays.sort(e);
+		System.out.println("Arrays.sort(e)" + Arrays.toString(e));
 		System.out.println("Arrays.binarySearch(e, 'c')：");
 		int s = Arrays.binarySearch(e, 'c');
 		System.out.println("字符c在数组的位置：" + s);
@@ -228,12 +297,12 @@ System.out.println(Arrays.toString(strs));//[abcdeag, abcdefg, abcdehg]
 ### 比较: `equals()`
 
 ```java
-	// *************比较 equals****************
-        char[] e = { 'a', 'f', 'b', 'c', 'e', 'A', 'C', 'B' };
+		// *************比较 equals****************
+		char[] e = { 'a', 'f', 'b', 'c', 'e', 'A', 'C', 'B' };
 		char[] f = { 'a', 'f', 'b', 'c', 'e', 'A', 'C', 'B' };
 		/*
-		 * 元素数量相同，并且相同位置的元素相同。 另外，如果两个数组引用都是null，则它们被认为是相等的 。
-		 */
+		* 元素数量相同，并且相同位置的元素相同。 另外，如果两个数组引用都是null，则它们被认为是相等的 。
+		*/
 		// 输出true
 		System.out.println("Arrays.equals(e, f):" + Arrays.equals(e, f));
 ```
@@ -280,12 +349,12 @@ System.out.println(Arrays.toString(strs));//[abcdeag, abcdefg, abcdehg]
 ### 转字符串 `toString()`
 
 ```java
-        // *************转字符串 toString()****************
-        /*
-         * 返回指定数组的内容的字符串表示形式。
-         */
-        char[] k = { 'a', 'f', 'b', 'c', 'e', 'A', 'C', 'B' };
-        System.out.println(Arrays.toString(k));// [a, f, b, c, e, A, C, B]
+		// *************转字符串 toString()****************
+		/*
+		* 返回指定数组的内容的字符串表示形式。
+		*/
+		char[] k = { 'a', 'f', 'b', 'c', 'e', 'A', 'C', 'B' };
+		System.out.println(Arrays.toString(k));// [a, f, b, c, e, A, C, B]
 ```
 
 ### 复制 `copyOf()`
@@ -293,10 +362,10 @@ System.out.println(Arrays.toString(strs));//[abcdeag, abcdefg, abcdehg]
 ```java
 		// *************复制 copy****************
 		// copyOf 方法实现数组复制,h为数组，6为复制的长度
-        int[] h = { 1, 2, 3, 3, 3, 3, 6, 6, 6, };
+		int[] h = { 1, 2, 3, 3, 3, 3, 6, 6, 6, };
 		int i[] = Arrays.copyOf(h, 6);
 		System.out.println("Arrays.copyOf(h, 6);：");
-		// 输出结果：993333
+		// 输出结果：123333
 		for (int j : i) {
 			System.out.print(j);
 		}
@@ -312,4 +381,3 @@ System.out.println(Arrays.toString(strs));//[abcdeag, abcdefg, abcdehg]
 		// 换行
 		System.out.println();
 ```
-
